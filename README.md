@@ -31,6 +31,15 @@ Supports single and multi-keyword searches and returns structured JSON highlight
 | PDF Ingestion  |  -->  | Embedding      |  -->  | Vector Database |  -->  | Query Interface  |
 | & Preprocessing|       | Generation     |       | (FAISS)         |       | (FastAPI/Swagger)|
 +----------------+       +----------------+       +-----------------+       +------------------+
+Workflow:
+
+1. PDF Ingestion: Upload and parse PDFs, extract text.
+
+2. Embedding Generation: Convert text chunks into vector embeddings.
+
+3. Vector Database (FAISS): Store embeddings for fast similarity search.
+
+4. Query Interface: Accept keyword queries, return structured JSON results.
 
 ## Folder Structure
 smart_resume_search/
