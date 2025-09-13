@@ -1,29 +1,28 @@
 # Smart Resume Search API
 
 A **FastAPI-based application** to upload, parse, and query resumes in PDF format.  
-Supports single and multi-keyword searches and returns structured JSON highlighting **Skills**, **Experience**, and **Projects**. Optional support for non-resume PDFs is also included.
+Supports single and multi-keyword searches and returns structured JSON highlighting **Skills**, **Experience**, and **Projects**. Works with both structured and generic PDFs.
 
 ---
 
 ## Executive Summary / Key Innovations
-- Fast, vector-based search using **FAISS** for scalable queries.
-- Supports **multi-keyword search** across multiple PDFs.
-- Handles PDFs without predefined sections, returning generic content if needed.
-- Recruiter-friendly structured output for resumes.
+- Fast, vector-based search using **FAISS** for scalable queries.  
+- Supports **multi-keyword search** across multiple PDFs.  
+- Handles PDFs without predefined sections, returning generic content if needed.  
+- Recruiter-friendly structured output for resumes.  
 - Modular architecture, easy to extend for future improvements.
 
 ---
 
 ## Features
-- Upload multiple PDFs at once.
-- Query resumes using single or multiple keywords.
-- Extract structured information (**Skills**, **Experience**, **Projects**) from PDFs.
-- Supports PDFs without predefined sections (returns content in a generic **Content** field).
-- Fast vector-based search using **FAISS**.
+- Upload multiple PDFs at once.  
+- Query resumes using single or multiple keywords.  
+- Extract structured information (**Skills**, **Experience**, **Projects**) from PDFs.  
+- Supports PDFs without predefined sections (returns content in a generic **Content** field).  
+- Fast vector-based search using **FAISS**.  
 - Ready for recruiter-friendly output.
 
 ---
-
 
 ## System Architecture
 
@@ -32,10 +31,6 @@ Supports single and multi-keyword searches and returns structured JSON highlight
 | PDF Ingestion  |  -->  | Embedding      |  -->  | Vector Database |  -->  | Query Interface  |
 | & Preprocessing|       | Generation     |       | (FAISS)         |       | (FastAPI/Swagger)|
 +----------------+       +----------------+       +-----------------+       +------------------+
-yaml
-Copy code
-
----
 
 ## Folder Structure
 smart_resume_search/
