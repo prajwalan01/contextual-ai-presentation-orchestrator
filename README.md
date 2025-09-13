@@ -25,10 +25,10 @@ Supports single and multi-keyword searches and returns structured JSON highlight
 ---
 
 ## System Architecture
-+----------------+ +----------------+ +-----------------+ +------------------+
-| PDF Upload | ---> | PDF Parsing & | ---> | FAISS Vector | ---> | Query API / JSON |
-| (POST /upload)| | Embeddings | | Store | | Response |
-+----------------+ +----------------+ +-----------------+ +------------------+
++----------------+       +----------------+       +-----------------+       +------------------+
+| PDF Ingestion  |  -->  | Embedding      |  -->  | Vector Database |  -->  | Query Interface  |
+| & Preprocessing|       | Generation     |       | (FAISS)         |       | (FastAPI/Swagger)|
++----------------+       +----------------+       +-----------------+       +------------------+
 
 yaml
 Copy code
