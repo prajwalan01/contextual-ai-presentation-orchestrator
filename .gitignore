@@ -1,0 +1,15 @@
+# Ignore uploaded PDFs
+uploaded_pdfs/
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment
+.venv/
+
+# IDE / Editor files
+.vscode/
+*.idea/
