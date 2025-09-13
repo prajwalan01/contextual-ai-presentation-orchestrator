@@ -25,7 +25,7 @@ Supports single and multi-keyword searches and returns structured JSON highlight
 ---
 
 ## System Architecture
-+----------------+       +----------------+       +-----------------+       +------------------+
+
 | PDF Ingestion  |  -->  | Embedding      |  -->  | Vector Database |  -->  | Query Interface  |
 | & Preprocessing|       | Generation     |       | (FAISS)         |       | (FastAPI/Swagger)|
 +----------------+       +----------------+       +-----------------+       +------------------+
