@@ -45,8 +45,6 @@ smart_resume_search/
 └── .gitignore
 Developer Guide
 Run the FastAPI Server
-bash
-Copy code
 uvicorn app.main:app --reload
 Access API Documentation:
 
@@ -55,8 +53,6 @@ Swagger UI: http://127.0.0.1:8000/docs
 ReDoc: http://127.0.0.1:8000/redoc
 
 Run Tests
-bash
-Copy code
 pytest tests/               # Run all tests
 pytest --cov=app tests/     # Check test coverage
 User Guide
@@ -64,13 +60,6 @@ Upload PDFs
 Endpoint: POST /upload_pdfs
 Description: Upload one or multiple PDF resumes. Previous uploads are cleared automatically.
 
-Request Example (cURL):
-
-bash
-Copy code
-curl -X POST "http://127.0.0.1:8000/upload_pdfs" \
-  -F "files=@Resume1.pdf" \
-  -F "files=@Resume2.pdf"
 Response Example:
 
 json
@@ -86,7 +75,7 @@ Description: Search for a single keyword across all uploaded PDFs.
 Request Example:
 
 json
-Copy code
+
 {
   "keyword": "Python"
 }
