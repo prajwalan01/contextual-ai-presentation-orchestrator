@@ -1,12 +1,6 @@
-fastapi==0.109.0
-uvicorn==0.23.1
-pydantic==1.10.9
-python-multipart==0.0.6
-Note:
-These are the core dependencies for FastAPI, file upload handling, and data validation.
-If later you integrate FAISS or vector search, you can add:
-
-txt
-Copy code
-faiss-cpu==1.7.4
-sentence-transformers==2.2.2
+fastapi
+uvicorn
+python-multipart
+langchain
+faiss-cpu
+pypdf
