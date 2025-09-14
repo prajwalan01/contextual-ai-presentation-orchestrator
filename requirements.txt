@@ -1,6 +1,6 @@
 fastapi
-uvicorn
-python-multipart
-langchain
-faiss-cpu
+uvicorn[standard]
 pypdf
+sentence-transformers
+faiss-cpu
+numpy
