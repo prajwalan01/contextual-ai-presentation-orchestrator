@@ -7,7 +7,6 @@ from pypdf import PdfReader
 from sentence_transformers import SentenceTransformer
 import numpy as np
 import faiss
-import os
 
 app = FastAPI(title="Contextual AI Presentation Orchestrator")
 
@@ -87,7 +86,29 @@ async def query_resume(keyword: str):
     result = {}
     for idx in I[0]:
         fname = file_mapping[idx]
-        result[fname] = {"Skills": [keyword]}  # Simplified for demo
+        result[fname] = {
+            "Skills": [keyword],
+            "Experience": [],
+            "Projects": []
+        }
+    return result
+
+
+@app.post("/multi_search")
+async def multi_search(keywords: List[str]):
+    if faiss_index is None or not file_mapping:
+        return JSONResponse(content={"message": "No PDFs uploaded"}, status_code=400)
+
+    result = {}
+    for kw in keywords:
+        query_vec = model.encode([kw], convert_to_numpy=True)
+        D, I = faiss_index.search(query_vec, k=len(file_mapping))
+        for idx in I[0]:
+            fname = file_mapping[idx]
+            if fname not in result:
+                result[fname] = {"Skills": [], "Experience": [], "Projects": []}
+            if kw not in result[fname]["Skills"]:
+                result[fname]["Skills"].append(kw)
     return result
 
 
