@@ -1,5 +1,5 @@
-﻿from .main import app  # Relative import avoids circular import
-from fastapi.testclient import TestClient
+﻿from fastapi.testclient import TestClient
+from .main import app
 from fpdf import FPDF
 import os
 
@@ -19,7 +19,7 @@ def test_upload_pdf():
     with open(PDF_FILE, "rb") as f:
         response = client.post("/upload", files={"file": (PDF_FILE, f, "application/pdf")})
     assert response.status_code == 200
-    assert "uploaded successfully" in response.text
+    assert "uploaded successfully" in response.json()["message"]
 
 def test_search_keyword():
     response = client.get("/search?keyword=Python")
