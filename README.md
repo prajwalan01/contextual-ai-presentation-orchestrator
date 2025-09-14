@@ -16,44 +16,37 @@ Supports single and multi-keyword searches and returns structured JSON highlight
 
 ## Workflow
 
-+----------------+ +----------------+ +-----------------+ +------------------+
-| PDF Ingestion | --> | Embedding | --> | Vector Database | --> | Query Interface |
-| & Preprocessing| | Generation | | (FAISS) | | (FastAPI/Swagger)|
-+----------------+ +----------------+ +-----------------+ +------------------+
+```text
++----------------+       +----------------+       +-----------------+       +------------------+
+| PDF Ingestion  |  -->  | Embedding      |  -->  | Vector Database |  -->  | Query Interface  |
+| & Preprocessing|       | Generation     |       | (FAISS)         |       | (FastAPI/Swagger)|
++----------------+       +----------------+       +-----------------+       +------------------+
+PDF Ingestion: Upload and parse PDFs, extract text. Previous uploads are cleared automatically.
 
-yaml
+Embedding Generation: Convert text chunks into vector embeddings.
+
+Vector Database (FAISS): Store embeddings for fast similarity search.
+
+Query Interface: Accept keyword queries, return structured JSON results.
+
+Folder Structure
+text
 Copy code
-
-1. **PDF Ingestion:** Upload and parse PDFs, extract text. Previous uploads are cleared automatically.  
-2. **Embedding Generation:** Convert text chunks into vector embeddings.  
-3. **Vector Database (FAISS):** Store embeddings for fast similarity search.  
-4. **Query Interface:** Accept keyword queries, return structured JSON results.
-
----
-
-## Folder Structure
-
 smart_resume_search/
 ├── app/
-│ ├── main.py # FastAPI app
-│ ├── utils.py # Helper functions
-│ ├── models.py # Model loading & embeddings
-├── uploaded_pdfs/ # Uploaded PDF storage (cleared on new upload)
-├── tests/ # Unit and integration tests
-├── docs/ # Architecture diagrams, guides
-├── requirements.txt # Python dependencies
+│   ├── main.py        # FastAPI app
+│   ├── utils.py       # Helper functions
+│   ├── models.py      # Model loading & embeddings
+├── uploaded_pdfs/     # Uploaded PDF storage (cleared on new upload)
+├── tests/             # Unit and integration tests
+├── docs/              # Architecture diagrams, guides
+├── requirements.txt   # Python dependencies
 ├── README.md
 └── .gitignore
-
-yaml
+Developer Guide
+Run the FastAPI Server
+bash
 Copy code
-
----
-
-## Developer Guide
-
-### Run the FastAPI Server
-```bash
 uvicorn app.main:app --reload
 Access API Documentation:
 
@@ -168,3 +161,6 @@ Live App: https://contextual-ai-presentation-orchestrator-2.onrender.com
 Swagger UI (API docs): https://contextual-ai-presentation-orchestrator-2.onrender.com/docs
 
 ReDoc (alt docs): https://contextual-ai-presentation-orchestrator-2.onrender.com/redoc
+
+yaml
+Copy code
