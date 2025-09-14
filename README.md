@@ -62,7 +62,6 @@ pytest --cov=app tests/     # Check test coverage
 User Guide
 Upload PDFs
 Endpoint: POST /upload_pdfs
-
 Description: Upload one or multiple PDF resumes. Previous uploads are cleared automatically.
 
 Request Example (cURL):
@@ -82,7 +81,6 @@ Copy code
 }
 Single Keyword Search
 Endpoint: POST /query_resume
-
 Description: Search for a single keyword across all uploaded PDFs.
 
 Request Example:
@@ -105,7 +103,6 @@ Copy code
 }
 Multi-Keyword Search
 Endpoint: POST /multi_search
-
 Description: Search using multiple keywords across all uploaded PDFs.
 
 Request Example:
@@ -128,7 +125,6 @@ Copy code
 }
 List Uploaded PDFs
 Endpoint: GET /list_files
-
 Description: List all PDFs currently uploaded to the system.
 
 Response Example:
