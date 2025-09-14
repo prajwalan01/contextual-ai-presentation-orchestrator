@@ -163,3 +163,13 @@ Open issues or submit pull requests for bug fixes, improvements, or new features
 
 License
 MIT License
+---
+
+## 🚀 Live Demo
+
+The project is deployed and accessible at:
+
+- **Live App**: [https://contextual-ai-presentation-orchestrator-1.onrender.com](https://contextual-ai-presentation-orchestrator-1.onrender.com)
+- **Swagger UI (API docs)**: [https://contextual-ai-presentation-orchestrator-1.onrender.com/docs](https://contextual-ai-presentation-orchestrator-1.onrender.com/docs)
+- **ReDoc (alt docs)**: [https://contextual-ai-presentation-orchestrator-1.onrender.com/redoc](https://contextual-ai-presentation-orchestrator-1.onrender.com/redoc)
+
