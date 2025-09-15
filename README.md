@@ -1,160 +1,124 @@
 # Smart Resume Search API
 
-A **FastAPI-based application** to upload, parse, and query resumes in PDF format.  
-Supports single and multi-keyword searches and returns structured JSON highlighting **Skills**, **Experience**, and **Projects**.  
-Optional support for non-resume PDFs is also included.
+A **FastAPI-based application** to upload, parse, and search resumes in PDF format.  
+Supports **single-keyword searches** and returns structured JSON highlighting **Skills**, **Experience**, and **Projects**.
 
 ---
 
 ## Key Features
 
-- Upload multiple PDF resumes at once.
-- Automatically clears previous uploads on each new upload to ensure only current PDFs are searchable.
-- Single and multi-keyword search across all uploaded PDFs.
-- List uploaded PDFs.
+- Upload **multiple PDF resumes** at once.  
+- Automatically clears previous uploads on each new upload.  
+- Search resumes for a **single keyword**.  
+- Returns results in structured JSON.  
+- Swagger UI available for **interactive API testing**.
 
 ---
 
-## Workflow
+## How to Run
 
-```text
-+----------------+       +----------------+       +-----------------+       +------------------+
-| PDF Ingestion  |  -->  | Embedding      |  -->  | Vector Database |  -->  | Query Interface  |
-| & Preprocessing|       | Generation     |       | (FAISS)         |       | (FastAPI/Swagger)|
-+----------------+       +----------------+       +-----------------+       +------------------+
-PDF Ingestion & Preprocessing: Upload and parse PDFs, extract text. Previous uploads are cleared automatically.
+### 1. Run Locally
+```bash
+# Install dependencies
+pip install -r requirements.txt
 
-Embedding Generation: Convert text chunks into vector embeddings.
+# Start the FastAPI server
+uvicorn main:app --reload
+Open Swagger UI: http://127.0.0.1:8000/docs
 
-Vector Database (FAISS): Store embeddings for fast similarity search.
+2. Using Render Deployment
 
-Query Interface: Accept keyword queries and return structured JSON results.
-Folder Structure
-smart_resume_search/
-├── app/
-│   ├── main.py        # FastAPI app
-│   ├── utils.py       # Helper functions
-│   ├── models.py      # Model loading & embeddings
-├── uploaded_pdfs/     # Uploaded PDF storage (cleared on new upload)
-├── tests/             # Unit and integration tests
-├── docs/              # Architecture diagrams, guides
-├── requirements.txt   # Python dependencies
-├── README.md
-└── .gitignore
-Developer Guide
-Run the FastAPI Server
-uvicorn app.main:app --reload
+Deployment link: https://smart-resume-search.onrender.com
 
-Access API Documentation
+Swagger UI: https://smart-resume-search.onrender.com/docs
+How to Use (Demo Flow)
 
-Swagger UI: http://127.0.0.1:8000/docs
-
-ReDoc: http://127.0.0.1:8000/redoc
-
-Run Tests
-pytest tests/               # Run all tests
-pytest --cov=app tests/     # Check test coverage
-User Guide
 Upload PDFs
 
-Endpoint: POST /upload_pdfs
+Use the /upload endpoint in Swagger UI.
 
-Description: Upload one or multiple PDF resumes. Previous uploads are cleared automatically.
+Upload one or multiple resumes.
 
-Request Example (cURL):
+Search by Keyword
 
-curl -X POST "http://127.0.0.1:8000/upload_pdfs" \
-  -F "files=@Resume1.pdf" \
-  -F "files=@Resume2.pdf"
+Use the /search endpoint.
 
+Enter a single keyword (e.g., "python").
 
-Response Example:
+Get results in JSON format.
+
+Repeat Search for Multiple Keywords
+
+Currently, only single keyword per request is supported.
+
+For multiple keywords, run multiple searches sequentially.
+
+Example Usage
+1. Upload PDFs
+
+Endpoint: /upload
+
+Method: POST
+
+Example Response:
 
 {
-  "status": "uploaded",
-  "files": ["Resume1.pdf", "Resume2.pdf"]
+  "message": "2 PDFs uploaded successfully."
 }
+2. Search by Keyword
 
-Single Keyword Search
+Endpoint: /search
 
-Endpoint: POST /query_resume
+Method: POST
 
-Description: Search for a single keyword across all uploaded PDFs.
-
-Request Example:
-
-{
-  "keyword": "Python"
-}
-
-
-Response Example:
+Example Request:
 
 {
-  "Resume1.pdf": {
-    "Skills": ["Python"],
-    "Experience": [],
-    "Projects": []
-  }
-}
-
-Multi-Keyword Search
-
-Endpoint: POST /multi_search
-
-Description: Search using multiple keywords across all uploaded PDFs.
-
-Request Example:
-
-{
-  "keywords": ["Python", "React"]
+  "query": "python"
 }
 
 
-Response Example:
+Example Response:
 
 {
-  "Resume1.pdf": {
-    "Skills": ["Python", "React"],
-    "Experience": [],
-    "Projects": []
-  }
+  "query": "python",
+  "results": [
+    {
+      "filename": "resume1.pdf",
+      "matches": ["Python Developer", "Python, Django, FastAPI"]
+    },
+    {
+      "filename": "resume2.pdf",
+      "matches": ["Python, AI Projects"]
+    }
+  ]
 }
+3. Multiple Keywords Workaround
 
-List Uploaded PDFs
+Currently only one keyword per request.
 
-Endpoint: GET /list_files
+Run searches sequentially for multiple keywords (e.g., "python", "AI", "FastAPI") to get full results.
 
-Description: List all PDFs currently uploaded to the system.
+Notes / Limitations
 
-Response Example:
+Multiple keywords in one request not supported (workaround: search sequentially).
 
-{
-  "uploaded_files": ["Resume1.pdf", "Resume2.pdf"]
-}
+Storage and memory are limited on free-tier Render.
 
-Performance & Limitations
+The app deletes previous uploads on new upload.
 
-FAISS vector search ensures fast keyword lookups, even with dozens of PDFs.
+For large-scale or production use, consider paid hosting or local hosting.
+Project Structure
+smart-resume-search/
+│
+├─ main.py          # FastAPI application
+├─ requirements.txt # Dependencies
+├─ uploads/         # Folder where uploaded PDFs are stored (auto-cleared)
+├─ README.md        # This file
+└─ .venv/           # Virtual environment (optional)
+## Demo Tips
 
-Supports PDFs with non-standard formats; very large files may take longer to process.
-
-Optimized for local deployment using free/open-source tools.
-
-Previous uploads are automatically cleared on new uploads to prevent old PDFs from appearing in search results.
-
-Contributing
-
-Open issues or submit pull requests for bug fixes, improvements, or new features.
-
-License
-
-MIT License
-
-🚀 Live Demo
-
-Live App: https://contextual-ai-presentation-orchestrator-2.onrender.com
-
-Swagger UI (API docs): https://contextual-ai-presentation-orchestrator-2.onrender.com/docs
-
-ReDoc (alternative docs): https://contextual-ai-presentation-orchestrator-2.onrender.com/redoc
+- Pre-upload PDFs before starting your demo.  
+- Use Swagger UI `/search` endpoint for interactive demo.  
+- For multiple keywords, run one query at a time to avoid redeployment.  
+- Keep JSON response visible for clarity.
