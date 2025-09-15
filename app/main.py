@@ -1,4 +1,4 @@
-from fastapi import FastAPI, UploadFile, File, Form
+from fastapi import FastAPI, UploadFile, File, Query
 from typing import List
 import pdfplumber
 import re
@@ -8,12 +8,12 @@ app = FastAPI(title="Smart Resume Search API")
 resumes = []
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB per file
 
-# ✅ Root endpoint
+# Root endpoint
 @app.get("/")
 async def root():
     return {"message": "Smart Resume Search API is live! Visit /docs for Swagger UI."}
 
-# ✅ Upload PDFs
+# Upload PDFs
 @app.post("/upload_pdfs")
 async def upload_pdfs(files: List[UploadFile] = File(...)):
     """
@@ -42,9 +42,9 @@ async def upload_pdfs(files: List[UploadFile] = File(...)):
     
     return {"message": f"{len(resumes)} resumes uploaded successfully"}
 
-# ✅ Search endpoint
+# Search resumes by query parameter
 @app.get("/search")
-async def search(query: str = Form(...)):
+async def search(query: str = Query(..., description="Keyword or multi-word query")):
     """
     Search resumes by keyword or multi-word query.
     Returns resumes containing the query with a text snippet.
@@ -60,7 +60,7 @@ async def search(query: str = Form(...)):
             })
     return {"query": query, "results": results}
 
-# ✅ Clear uploads
+# Clear uploads
 @app.post("/clear_uploads")
 async def clear_uploads():
     """
