@@ -1,54 +1,50 @@
 from fastapi import FastAPI, UploadFile, File
+from fastapi.responses import JSONResponse
 import os
-from fpdf import FPDF
-import numpy as np
-from pypdf import PdfReader
-from sentence_transformers import SentenceTransformer
-import faiss
+import shutil
 
-app = FastAPI(title="Contextual AI Presentation Orchestrator")
+UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# Directory for uploaded PDFs
-UPLOAD_DIR = "uploaded_pdfs"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
+app = FastAPI()
 
-# Dummy sentence-transformer + FAISS setup (for demonstration)
-model = SentenceTransformer('all-MiniLM-L6-v2')
-dimension = 384  # embedding dimension for this model
-index = faiss.IndexFlatL2(dimension)
+# Lazy-loaded model (simulate heavy load)
+model = None
+def load_model():
+    global model
+    if model is None:
+        print("Loading model...")
+        # Replace with your actual ML model if needed
+        import time
+        time.sleep(2)
+        model = "Model ready"
+    return model
 
+# Utility to clear old files
+def clear_uploads():
+    for filename in os.listdir(UPLOAD_FOLDER):
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        if os.path.isfile(file_path):
+            os.remove(file_path)
 
-@app.post("/upload")
-async def upload_file(file: UploadFile = File(...)):
-    """Upload PDF files."""
-    file_path = os.path.join(UPLOAD_DIR, file.filename)
-    with open(file_path, "wb") as f:
-        f.write(await file.read())
+@app.post("/upload/")
+async def upload_files(files: list[UploadFile] = File(...)):
+    clear_uploads()  # delete old PDFs
+    saved_files = []
+    for file in files:
+        file_path = os.path.join(UPLOAD_FOLDER, file.filename)
+        with open(file_path, "wb") as f:
+            shutil.copyfileobj(file.file, f)
+        saved_files.append(file.filename)
+    return {"uploaded_files": saved_files}
 
-    # Optional: generate a dummy PDF for testing if needed
-    if file.filename == "sample_resume.pdf" and os.path.getsize(file_path) == 0:
-        pdf = FPDF()
-        pdf.add_page()
-        pdf.set_font("Arial", size=12)
-        pdf.cell(200, 10, txt="Name: John Doe", ln=True)
-        pdf.cell(200, 10, txt="Skills: Python, FastAPI, AI", ln=True)
-        pdf.output(file_path)
+@app.get("/search/")
+def search(query: str):
+    load_model()  # lazy-load model
+    # For demo, just search file names
+    results = [f for f in os.listdir(UPLOAD_FOLDER) if query.lower() in f.lower()]
+    return JSONResponse({"query": query, "results": results})
 
-    return {"message": f"{file.filename} uploaded successfully"}
-
-
-@app.get("/search")
-async def search_keyword(keyword: str):
-    """Dummy search endpoint returning skills for demonstration."""
-    # In real scenario, you can extract text from PDFs and perform vector search
-    if keyword.lower() == "python":
-        return {"Skills": ["Python", "FastAPI", "AI"]}
-    else:
-        return {"Skills": []}
-
-
-# Railway deployment: run with uvicorn
-if __name__ == "__main__":
-    import uvicorn
-    port = int(os.environ.get("PORT", 8000))  # Railway sets PORT automatically
-    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=True)
+@app.get("/")
+def root():
+    return {"message": "PDF Search API is live"}
