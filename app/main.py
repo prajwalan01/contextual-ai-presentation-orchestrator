@@ -1,50 +1,71 @@
-from fastapi import FastAPI, UploadFile, File
-from fastapi.responses import JSONResponse
-import os
-import shutil
+from fastapi import FastAPI, UploadFile, File, Form
+from typing import List, Dict
+import pdfplumber
+import re
 
-UPLOAD_FOLDER = "uploads"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app = FastAPI(title="Smart Resume Search API")
 
-app = FastAPI()
+# In-memory storage for uploaded resumes
+resumes = []
 
-# Lazy-loaded model (simulate heavy load)
-model = None
-def load_model():
-    global model
-    if model is None:
-        print("Loading model...")
-        # Replace with your actual ML model if needed
-        import time
-        time.sleep(2)
-        model = "Model ready"
-    return model
-
-# Utility to clear old files
-def clear_uploads():
-    for filename in os.listdir(UPLOAD_FOLDER):
-        file_path = os.path.join(UPLOAD_FOLDER, filename)
-        if os.path.isfile(file_path):
-            os.remove(file_path)
-
-@app.post("/upload/")
-async def upload_files(files: list[UploadFile] = File(...)):
-    clear_uploads()  # delete old PDFs
-    saved_files = []
+# -----------------------
+# Upload PDFs Endpoint
+# -----------------------
+@app.post("/upload_pdfs")
+async def upload_pdfs(files: List[UploadFile] = File(...)):
+    """
+    Upload multiple PDF resumes.
+    Clears previous uploads automatically.
+    """
+    global resumes
+    resumes = []  # Clear previous uploads
     for file in files:
-        file_path = os.path.join(UPLOAD_FOLDER, file.filename)
-        with open(file_path, "wb") as f:
-            shutil.copyfileobj(file.file, f)
-        saved_files.append(file.filename)
-    return {"uploaded_files": saved_files}
+        text = ""
+        with pdfplumber.open(file.file) as pdf:
+            for page in pdf.pages:
+                page_text = page.extract_text()
+                if page_text:
+                    text += page_text + " "
+        # Normalize text: lowercase, remove extra spaces/newlines
+        text = re.sub(r"\s+", " ", text.lower()).strip()
+        resumes.append({
+            "name": file.filename,
+            "text": text
+        })
+    return {"message": f"{len(resumes)} resumes uploaded successfully"}
 
-@app.get("/search/")
-def search(query: str):
-    load_model()  # lazy-load model
-    # For demo, just search file names
-    results = [f for f in os.listdir(UPLOAD_FOLDER) if query.lower() in f.lower()]
-    return JSONResponse({"query": query, "results": results})
+# -----------------------
+# Search Endpoint
+# -----------------------
+@app.get("/search")
+async def search(query: str = Form(...)):
+    """
+    Search uploaded resumes by keyword or phrase.
+    Returns resumes matching the query.
+    """
+    query = query.lower().strip()
+    results = []
 
-@app.get("/")
-def root():
-    return {"message": "PDF Search API is live"}
+    # Regex for exact phrase matching
+    pattern = re.compile(re.escape(query))
+
+    for resume in resumes:
+        if pattern.search(resume['text']):
+            results.append({
+                "name": resume['name'],
+                "text_snippet": resume['text'][:200]  # First 200 chars as snippet
+            })
+
+    return {"query": query, "results": results}
+
+# -----------------------
+# Clear Uploads Endpoint
+# -----------------------
+@app.post("/clear_uploads")
+async def clear_uploads():
+    """
+    Clear all previously uploaded PDFs.
+    """
+    global resumes
+    resumes = []
+    return {"message": "All uploads cleared"}

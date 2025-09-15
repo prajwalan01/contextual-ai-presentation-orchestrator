@@ -1,3 +1,5 @@
 fastapi
-uvicorn
+uvicorn[standard]
+pdfplumber
 python-multipart
+typing-extensions
