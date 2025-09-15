@@ -37,7 +37,13 @@ async def upload_pdfs(files: List[UploadFile] = File(...)):
                 page_text = page.extract_text()
                 if page_text:
                     text += page_text + " "
+
+        # Normalize text: lowercase, remove extra spaces/newlines
         text = re.sub(r"\s+", " ", text.lower()).strip()
+        
+        # Optional debug: print first 500 chars
+        print(f"Extracted from {file.filename}:\n{text[:500]}")
+        
         resumes.append({"name": file.filename, "text": text})
     
     return {"message": f"{len(resumes)} resumes uploaded successfully"}
